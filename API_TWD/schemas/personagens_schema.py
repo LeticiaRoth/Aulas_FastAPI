@@ -1,3 +1,4 @@
+#Converte para JSON para fazer a comunicação com o banco
 from typing import Optional
 #Como o SQLAlchemy tem o BaseModel dele, não podemos confundir então uso o as para determinar o SCBaseModel
 from pydantic import BaseModel as SCBaseModel

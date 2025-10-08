@@ -2,7 +2,7 @@
 
 from core.configs import settings
 from core.database import engine
-from models import *
+from models import all_models
 
 async def create_table() -> None:
     print("Criando as tabelas no banco da API TWD")
@@ -16,7 +16,7 @@ async def create_table() -> None:
     print("Tabelas criadas com sucesso!")
 
 
-    if __name__ == "__main__":
-        import asyncio
+if __name__ == "__main__":
+    import asyncio
 
-        asyncio.run(create_table())
+    asyncio.run(create_table())

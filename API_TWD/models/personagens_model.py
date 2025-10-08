@@ -15,4 +15,4 @@ class PersonagensModel(settings.DBBaseModel):
      #Para determinar um campo que não pode ser nulo
     nome : str = Column(String(255), nullable=False)
     idade : int = Column(Integer())
-    grupo : str = Column(String(), nullable=False)
+    grupo : str = Column(String(255), nullable=False)
