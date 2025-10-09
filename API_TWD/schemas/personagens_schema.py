@@ -13,4 +13,4 @@ class PersonagensSchema(SCBaseModel):
 
     class Config:
         #Esse chemas vai ser no formato JSON que ferá a comunicação com o Banco
-        orm_mode = True
+        from_attributes = True
