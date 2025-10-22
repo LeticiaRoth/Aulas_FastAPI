@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     API_V1_STR : str = '/api/v1'
 
     #Depende do banco, nesse caso usamos o MYSQL, trocar a porta se necessário
-    DB_URL: str = 'mysql+asyncmy://root@127.0.0.1:3307/personagenstwd'
+    DB_URL: str = 'mysql+asyncmy://root@127.0.0.1:3306/personagenstwd'
 
     #Padronização para que todos os models herdem os recursos do SQLalchemy
     DBBaseModel = declarative_base()

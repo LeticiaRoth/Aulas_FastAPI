@@ -1,6 +1,8 @@
 from core.configs import settings
 #Passo o que vou usar dentro do meu banco
 from sqlalchemy import Column,Integer,String
+from pydantic import BaseModel
+from typing import Optional
 
 #DBBaseModel é uma clare declarativa do SQLAlchemy
 
@@ -16,3 +18,13 @@ class PersonagensModel(settings.DBBaseModel):
     nome : str = Column(String(255), nullable=False)
     idade : int = Column(Integer())
     grupo : str = Column(String(255), nullable=False)
+
+
+#Criar a classe para o PersonagensModelPatch
+class PersonagensSchemaPatch(BaseModel):
+    nome: Optional[str] = None
+    idade: Optional[int] = None
+    grupo: Optional[str] = None
+
+    class Config:
+        from_attributes = True

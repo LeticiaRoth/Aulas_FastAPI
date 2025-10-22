@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 #Configuração da rota da models
-from models.personagens_model import PersonagensModel
+from models.personagens_model import PersonagensModel, PersonagensSchemaPatch
 from schemas.personagens_schema import PersonagensSchema
 
 from core.deps import get_session
@@ -120,31 +120,32 @@ async def delete_personagem(personagem_id: int, db: AsyncSession = Depends(get_s
 
 
 #MÉTODO PATCH - CONEXÃO COM O BANCO
-'''
-@router.patch("/{personagem_id}", response=PersonagensSchema, status_code=status.HTTP_202_ACCEPTED)
-async def patch_personagem(personagem_id: int, personagem_db : PersonagensSchema, db: AsyncSession = Depends(get_session))
+# Use response_model para serializar a saída
+#Usa o Schema separada porque só alguns campos serão atualizados, diferente do PUT que atualiza todos
+@router.patch("/{personagem_id}", response_model=PersonagensSchema, status_code=status.HTTP_202_ACCEPTED)
+async def patch_personagem(personagem_id: int, personagem_payload: PersonagensSchemaPatch,  db: AsyncSession = Depends(get_session)): 
+    
     # Requisição via query para encontrar o meu personagem
     query = select(PersonagensModel).filter(PersonagensModel.id == personagem_id)
-    #Await para a função assincrona para rodar o comando, sem demorar para atender outro, quando a query
-    #esta pronto ele volta
     result = await db.execute(query)
-    #Variavel que guarda o resultado encontrado
-    personagem_update = result.scalar_one_or_none()
+    personagem_no_banco = result.scalar_one_or_none()
 
-    if not personagem_db:
+    #Verficiacao se o personagem foi encontrado
+    if not personagem_no_banco:
         raise HTTPException(
-            detail = "Personagem não foi encontrado dentro do banco de dados"
+            detail="Personagem não foi encontrado dentro do banco de dados",
             status_code=status.HTTP_404_NOT_FOUND
         )
     
-    update_data = personagem_update.model_dump(exclude_unset = True)
+    #APENAS com os campos que o usuário enviou, serão mudados (exclude_unset=True)
+    update_data = personagem_payload.model_dump(exclude_unset=True)
 
+    #Iteracao sobre os dados do payload e atualize o objeto do banco
     for key, value in update_data.items():
-        setattr(personagem_update,key, value)
-
+        #Setattr define um atributo de um objeto, no caso vai atualizar
+        setattr(personagem_no_banco, key, value) 
 
     await db.commit()
-    await db.refresh(personagem_db)
+    await db.refresh(personagem_no_banco)
     
-    return personagem_db
-'''
+    return personagem_no_banco
