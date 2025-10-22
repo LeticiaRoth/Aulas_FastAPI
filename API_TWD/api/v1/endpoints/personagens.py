@@ -117,3 +117,34 @@ async def delete_personagem(personagem_id: int, db: AsyncSession = Depends(get_s
             detail="Personagem não encontrado.",
             status_code=status.HTTP_404_NOT_FOUND
         )
+
+
+#MÉTODO PATCH - CONEXÃO COM O BANCO
+'''
+@router.patch("/{personagem_id}", response=PersonagensSchema, status_code=status.HTTP_202_ACCEPTED)
+async def patch_personagem(personagem_id: int, personagem_db : PersonagensSchema, db: AsyncSession = Depends(get_session))
+    # Requisição via query para encontrar o meu personagem
+    query = select(PersonagensModel).filter(PersonagensModel.id == personagem_id)
+    #Await para a função assincrona para rodar o comando, sem demorar para atender outro, quando a query
+    #esta pronto ele volta
+    result = await db.execute(query)
+    #Variavel que guarda o resultado encontrado
+    personagem_update = result.scalar_one_or_none()
+
+    if not personagem_db:
+        raise HTTPException(
+            detail = "Personagem não foi encontrado dentro do banco de dados"
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+    
+    update_data = personagem_update.model_dump(exclude_unset = True)
+
+    for key, value in update_data.items():
+        setattr(personagem_update,key, value)
+
+
+    await db.commit()
+    await db.refresh(personagem_db)
+    
+    return personagem_db
+'''
